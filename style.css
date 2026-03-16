@@ -1,0 +1,582 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+header h1 {
+    font-size: 24px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Note List */
+.note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.empty-hint {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+/* Note Card */
+.note-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+
+.note-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.note-card.color-red { border-left-color: #ef4444; }
+.note-card.color-blue { border-left-color: #3b82f6; }
+.note-card.color-green { border-left-color: #22c55e; }
+.note-card.color-purple { border-left-color: #a855f7; }
+
+.note-card.completed {
+    opacity: 0.6;
+}
+
+.note-card.completed .note-content {
+    text-decoration: line-through;
+}
+
+.note-card.overdue .note-content {
+    color: #ef4444;
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.note-content {
+    font-size: 16px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.note-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.note-due-date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.note-due-date.overdue {
+    color: #ef4444;
+    font-weight: 500;
+}
+
+.note-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.modal-confirm {
+    max-width: 400px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* datetime-local 输入框特殊样式 */
+.form-group input[type="datetime-local"] {
+    cursor: pointer;
+    position: relative;
+}
+
+/* Webkit 浏览器日历图标位置优化 */
+.form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    left: 0;
+}
+
+/* 显示自定义日历图标 */
+.form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator::before {
+    content: '📅';
+    font-size: 16px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Firefox 日历图标 */
+.form-group input[type="datetime-local"]::-moz-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* ==================== 标签栏 ==================== */
+.tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+}
+
+.tab-bar::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tab-bar::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+}
+
+.tab {
+    padding: 8px 16px;
+    border: none;
+    background: #e5e7eb;
+    color: #374151;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tab:hover {
+    background: #d1d5db;
+}
+
+.tab.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.tab-count {
+    font-weight: 600;
+}
+
+.manage-btn {
+    background: transparent;
+    color: #6b7280;
+}
+
+.manage-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* ==================== 增强的便签卡片样式 ==================== */
+.note-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+
+/* 浅色背景 */
+.note-card.color-yellow { background: #fffef5; border-left-color: #fbbf24; }
+.note-card.color-orange { background: #fffbf0; border-left-color: #f97316; }
+.note-card.color-red { background: #fef2f2; border-left-color: #ef4444; }
+.note-card.color-pink { background: #fef5f7; border-left-color: #ec4899; }
+.note-card.color-sky { background: #f0f9ff; border-left-color: #0ea5e9; }
+.note-card.color-blue { background: #eff6ff; border-left-color: #3b82f6; }
+.note-card.color-green { background: #f0fdf4; border-left-color: #22c55e; }
+.note-card.color-rose { background: #fef5f6; border-left-color: #f43f5e; }
+.note-card.color-purple { background: #faf5ff; border-left-color: #a855f7; }
+.note-card.color-gray { background: #f9fafb; border-left-color: #6b7280; }
+
+.note-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.note-card.completed {
+    opacity: 0.6;
+}
+
+.note-card.completed .note-content {
+    text-decoration: line-through;
+}
+
+.note-card.completed .tag-pill {
+    text-decoration: line-through;
+}
+
+.note-card.overdue .note-content {
+    color: #ef4444;
+}
+
+/* 标签胶囊 */
+.note-card .tag-pill {
+    background: transparent;
+    border: 1.5px solid #9ca3af;
+    color: #6b7280;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+/* 为每种颜色定义边框颜色 */
+.note-card.color-yellow .tag-pill {
+    border-color: #fbbf24;
+    color: #92400e;
+}
+.note-card.color-orange .tag-pill {
+    border-color: #f97316;
+    color: #9a3412;
+}
+.note-card.color-red .tag-pill {
+    border-color: #ef4444;
+    color: #991b1b;
+}
+.note-card.color-pink .tag-pill {
+    border-color: #ec4899;
+    color: #9d174d;
+}
+.note-card.color-sky .tag-pill {
+    border-color: #0ea5e9;
+    color: #0c4a6e;
+}
+.note-card.color-blue .tag-pill {
+    border-color: #3b82f6;
+    color: #1e40af;
+}
+.note-card.color-green .tag-pill {
+    border-color: #22c55e;
+    color: #14532d;
+}
+.note-card.color-rose .tag-pill {
+    border-color: #f43f5e;
+    color: #881337;
+}
+.note-card.color-purple .tag-pill {
+    border-color: #a855f7;
+    color: #581c87;
+}
+.note-card.color-gray .tag-pill {
+    border-color: #6b7280;
+    color: #374151;
+}
+
+/* ==================== 标签管理模态框 ==================== */
+.modal-large {
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.tag-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.tag-list-table th,
+.tag-list-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tag-list-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.tag-list-table tr:hover {
+    background: #f9fafb;
+}
+
+.color-preview {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+}
+
+.pending-badge {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-small-text {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+}
+
+.btn-small-text:hover {
+    text-decoration: underline;
+}
+
+.btn-small-text.delete {
+    color: #ef4444;
+}
+
+.btn-small-text:disabled {
+    color: #d1d5db;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+/* ==================== 颜色选择器 ==================== */
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.color-option {
+    width: 48px;
+    height: 48px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.color-option[data-color="yellow"] { background: #fff9c4; }
+.color-option[data-color="orange"] { background: #ffedd5; }
+.color-option[data-color="red"] { background: #ffcdd2; }
+.color-option[data-color="pink"] { background: #fce7f3; }
+.color-option[data-color="sky"] { background: #e0f2fe; }
+.color-option[data-color="blue"] { background: #bbdefb; }
+.color-option[data-color="green"] { background: #c8e6c9; }
+.color-option[data-color="rose"] { background: #ffe4e6; }
+.color-option[data-color="purple"] { background: #e1bee7; }
+.color-option[data-color="gray"] { background: #f3f4f6; }
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #f44336;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast.toast-success {
+    background: #22c55e;
+}
+
+.toast.toast-info {
+    background: #3b82f6;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;">
+    <title>便签管理</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 便签管理</h1>
+            <div class="header-actions">
+                <button id="reopenPinBtn" class="btn btn-secondary" style="display: none;">📌 打开置顶窗口</button>
+                <button id="addNoteBtn" class="btn btn-primary">+ 添加便签</button>
+            </div>
+        </header>
+
+        <!-- 标签栏 -->
+        <div class="tab-bar" id="tabBar">
+            <button class="tab active" data-tag-id="">全部(<span class="tab-count">0</span>)</button>
+            <!-- 标签按钮将通过 JS 动态生成 -->
+            <button class="tab manage-btn" id="manageTagsBtn">⚙️ 管理</button>
+        </div>
+
+        <div id="noteList" class="note-list">
+            <div class="empty-state">
+                <p>暂无待办事项</p>
+                <p class="empty-hint">点击上方按钮添加你的第一个便签</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">添加便签</h2>
+            <form id="noteForm">
+                <input type="hidden" id="noteId">
+                <div class="form-group">
+                    <label for="noteContent">任务内容 *</label>
+                    <textarea id="noteContent" rows="4" required placeholder="请输入任务内容"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="noteDueDate">处理时间</label>
+                    <input type="datetime-local" id="noteDueDate">
+                </div>
+                <div class="form-group">
+                    <label for="noteColor">颜色标签</label>
+                    <select id="noteColor">
+                        <option value="">无</option>
+                        <!-- 选项将通过 JavaScript 动态加载 -->
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="btn btn-secondary">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content modal-confirm">
+            <h2>确认删除</h2>
+            <p>确定要删除这个便签吗？</p>
+            <div class="form-actions">
+                <button type="button" id="confirmCancelBtn" class="btn btn-secondary">取消</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag Manager Modal -->
+    <div id="tagManagerModal" class="modal">
+        <div class="modal-content modal-large">
+            <h2>标签管理</h2>
+            <button id="addTagBtn" class="btn btn-primary" style="margin-bottom: 16px;">+ 新建标签</button>
+            <button id="closeTagManagerBtn" class="btn btn-secondary" style="margin-bottom: 16px;">关闭</button>
+            <table class="tag-list-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">排序</th>
+                        <th style="width: 60px;">颜色</th>
+                        <th>名称</th>
+                        <th style="width: 60px;">待办</th>
+                        <th style="width: 120px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tagListBody">
+                    <!-- 动态渲染 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tag Form Modal -->
+    <div id="tagFormModal" class="modal">
+        <div class="modal-content">
+            <h2 id="tagFormTitle">新建标签</h2>
+            <form id="tagForm">
+                <input type="hidden" id="tagId">
+                <div class="form-group">
+                    <label for="tagName">标签名称 *</label>
+                    <input type="text" id="tagName" required placeholder="如：工作、生活">
+                </div>
+                <div class="form-group">
+                    <label for="tagSortOrder">排序</label>
+                    <input type="number" id="tagSortOrder" placeholder="数字，小的排在前面">
+                    <small style="color: #6b7280;">留空则排在最后</small>
+                </div>
+                <div class="form-group">
+                    <label>颜色 *</label>
+                    <div class="color-options" id="colorOptions">
+                        <button type="button" class="color-option" data-color="yellow" data-hex="#fff9c4" data-display="黄色">🟡</button>
+                        <button type="button" class="color-option" data-color="orange" data-hex="#ffedd5" data-display="橙色">🟠</button>
+                        <button type="button" class="color-option" data-color="red" data-hex="#ffcdd2" data-display="红色">🔴</button>
+                        <button type="button" class="color-option" data-color="pink" data-hex="#fce7f3" data-display="粉色">🌸</button>
+                        <button type="button" class="color-option" data-color="sky" data-hex="#e0f2fe" data-display="天蓝">🩵</button>
+                        <button type="button" class="color-option" data-color="blue" data-hex="#bbdefb" data-display="蓝色">🔵</button>
+                        <button type="button" class="color-option" data-color="green" data-hex="#c8e6c9" data-display="绿色">🟢</button>
+                        <button type="button" class="color-option" data-color="rose" data-hex="#ffe4e6" data-display="玫红">🩷</button>
+                        <button type="button" class="color-option" data-color="purple" data-hex="#e1bee7" data-display="紫色">🟣</button>
+                        <button type="button" class="color-option" data-color="gray" data-hex="#f3f4f6" data-display="灰色">⚫</button>
+                    </div>
+                    <input type="hidden" id="tagColor" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="tagFormCancelBtn" class="btn btn-secondary">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

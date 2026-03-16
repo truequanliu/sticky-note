@@ -1,0 +1,46 @@
+{
+  "name": "sticky-note",
+  "version": "1.0.0",
+  "description": "A desktop sticky note app with pinned window",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --inspect",
+    "build": "electron-builder -w --win --dir",
+    "dist": "electron-builder -w --win"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "mysql2": "^3.19.1"
+  },
+  "build": {
+    "appId": "com.stickynote.app",
+    "productName": "便签",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!**/*.ts",
+      "!*.map",
+      "!src/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    }
+  }
+}

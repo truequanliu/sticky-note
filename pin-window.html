@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;">
+    <title>置顶便签</title>
+    <link rel="stylesheet" href="pin-style.css">
+</head>
+<body>
+    <div class="pin-window">
+        <div class="pin-header">
+            <span class="pin-title">📌 置顶事项</span>
+            <button id="closePinBtn" class="close-btn">×</button>
+        </div>
+
+        <div id="pinNoteList" class="pin-note-list">
+            <div class="empty-state">
+                <p>🎉</p>
+                <p>全部完成！</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="pin-app.js"></script>
+</body>
+</html>

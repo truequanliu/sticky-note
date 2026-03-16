@@ -1,0 +1,159 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: transparent;
+}
+
+.pin-window {
+    width: 320px;
+    min-height: 200px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.pin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    -webkit-app-region: drag;
+}
+
+.pin-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.close-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    -webkit-app-region: no-drag;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.pin-note-list {
+    padding: 12px;
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.pin-note-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pin-note-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9ca3af;
+}
+
+.empty-state p:first-child {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+.pin-note-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.pin-note-card.color-yellow { border-left-color: #fbbf24; }
+.pin-note-card.color-orange { border-left-color: #f97316; }
+.pin-note-card.color-red { border-left-color: #ef4444; }
+.pin-note-card.color-pink { border-left-color: #ec4899; }
+.pin-note-card.color-sky { border-left-color: #0ea5e9; }
+.pin-note-card.color-blue { border-left-color: #3b82f6; }
+.pin-note-card.color-green { border-left-color: #22c55e; }
+.pin-note-card.color-rose { border-left-color: #f43f5e; }
+.pin-note-card.color-purple { border-left-color: #a855f7; }
+.pin-note-card.color-gray { border-left-color: #6b7280; }
+
+.pin-note-content {
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+    margin-bottom: 8px;
+}
+
+.pin-note-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.pin-note-due {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pin-note-due.overdue {
+    color: #ef4444;
+    font-weight: 500;
+}
+
+.pin-note-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.pin-btn {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pin-btn-complete {
+    background: #22c55e;
+    color: white;
+}
+
+.pin-btn-complete:hover {
+    background: #16a34a;
+}
+
+.pin-btn-unpin {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.pin-btn-unpin:hover {
+    background: #d1d5db;
+}
