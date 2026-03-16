@@ -16,7 +16,7 @@ const windowStateFile = path.join(app.getPath('userData'), 'window-state.json');
 
 /**
  * 读取窗口状态
- * @returns {Object} 包含主窗口和置顶窗口的状态
+ * @returns {Promise<Object>} 包含主窗口和置顶窗口的状态
  * @returns {Object} returns.mainWindow 主窗口状态
  * @returns {number} [returns.mainWindow.width] 窗口宽度
  * @returns {number} [returns.mainWindow.height] 窗口高度
@@ -25,49 +25,55 @@ const windowStateFile = path.join(app.getPath('userData'), 'window-state.json');
  * @returns {boolean} [returns.mainWindow.isMaximized] 是否最大化
  * @returns {Object} returns.pinWindow 置顶窗口状态
  */
-function loadWindowState() {
+async function loadWindowState() {
   try {
-    if (fs.existsSync(windowStateFile)) {
-      const data = fs.readFileSync(windowStateFile, 'utf8');
-      return JSON.parse(data);
-    }
+    await fs.promises.access(windowStateFile);
+    const data = await fs.promises.readFile(windowStateFile, 'utf8');
+    return JSON.parse(data);
   } catch (error) {
-    console.error('Failed to load window state:', error);
+    // 文件不存在或读取错误，返回默认值
+    return {
+      mainWindow: { width: 900, height: 700 },
+      pinWindow: { width: 320, height: 450 }
+    };
   }
-  return {
-    mainWindow: { width: 900, height: 700 },
-    pinWindow: { width: 320, height: 450 }
-  };
 }
 
 /**
- * 保存窗口状态到文件
+ * 保存窗口状态到文件（异步，带防抖）
  */
+let saveStateTimeout = null;
 function saveWindowState() {
-  try {
-    const state = {};
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      const [x, y] = mainWindow.getPosition();
-      const [width, height] = mainWindow.getSize();
-      state.mainWindow = { x, y, width, height, isMaximized: mainWindow.isMaximized() };
-    }
-    if (pinWindow && !pinWindow.isDestroyed()) {
-      const [x, y] = pinWindow.getPosition();
-      const [width, height] = pinWindow.getSize();
-      state.pinWindow = { x, y, width, height };
-    }
-    fs.writeFileSync(windowStateFile, JSON.stringify(state), 'utf8');
-  } catch (error) {
-    console.error('Failed to save window state:', error);
+  // 防抖：避免频繁写入文件
+  if (saveStateTimeout) {
+    clearTimeout(saveStateTimeout);
   }
+  saveStateTimeout = setTimeout(async () => {
+    try {
+      const state = {};
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        const [x, y] = mainWindow.getPosition();
+        const [width, height] = mainWindow.getSize();
+        state.mainWindow = { x, y, width, height, isMaximized: mainWindow.isMaximized() };
+      }
+      if (pinWindow && !pinWindow.isDestroyed()) {
+        const [x, y] = pinWindow.getPosition();
+        const [width, height] = pinWindow.getSize();
+        state.pinWindow = { x, y, width, height };
+      }
+      await fs.promises.writeFile(windowStateFile, JSON.stringify(state, null, 2), 'utf8');
+    } catch (error) {
+      console.error('Failed to save window state:', error);
+    }
+  }, 500); // 500ms 防抖延迟
 }
 
 /**
  * 创建主窗口
  * 恢复上次保存的位置和大小
  */
-function createMainWindow() {
-  const savedState = loadWindowState();
+async function createMainWindow() {
+  const savedState = await loadWindowState();
   const mainState = savedState.mainWindow || { width: 900, height: 700 };
 
   mainWindow = new BrowserWindow({
@@ -113,7 +119,7 @@ function createMainWindow() {
  * 如果窗口已存在则显示并聚焦，否则创建新窗口
  * 恢复上次保存的位置和大小
  */
-function createPinWindow() {
+async function createPinWindow() {
   // 如果置顶窗口已存在，显示并聚焦
   if (pinWindow && !pinWindow.isDestroyed()) {
     pinWindow.show();
@@ -121,7 +127,7 @@ function createPinWindow() {
     return;
   }
 
-  const savedState = loadWindowState();
+  const savedState = await loadWindowState();
   const pinState = savedState.pinWindow || { width: 320, height: 450 };
 
   pinWindow = new BrowserWindow({
@@ -275,9 +281,6 @@ function notifyFilterChanged(tagId) {
     pinWindow.webContents.send('filter-changed', { tagId });
   }
 }
-
-// 导出 notifyFilterChanged 供外部调用
-global.notifyFilterChanged = notifyFilterChanged;
 
 app.whenReady().then(async () => {
   createMainWindow();

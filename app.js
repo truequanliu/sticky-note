@@ -469,6 +469,18 @@ async function openAddModal() {
   await populateTagSelect();
 }
 
+/**
+ * 格式化本地日期时间为 datetime-local 输入格式
+ * @param {Date|string} date - 日期对象或字符串
+ * @returns {string} 格式化后的本地日期时间 (YYYY-MM-DDTHH:mm)
+ */
+function formatLocalDateTime(date) {
+  const d = date instanceof Date ? date : new Date(date);
+  const offset = d.getTimezoneOffset() * 60000;
+  const localISOTime = new Date(d.getTime() - offset).toISOString().slice(0, 16);
+  return localISOTime;
+}
+
 // 编辑便签
 async function editNote(id) {
   const note = await window.electronAPI.db.getById(id);
@@ -485,16 +497,8 @@ async function editNote(id) {
   modalTitle.textContent = '编辑便签';
   noteId.value = id;
   noteContent.value = normalizedNote.content;
-  // 处理日期格式 - dueDate 可能是 Date 对象或字符串
-  let dueDateValue = '';
-  if (normalizedNote.dueDate) {
-    const date = normalizedNote.dueDate instanceof Date
-      ? normalizedNote.dueDate
-      : new Date(normalizedNote.dueDate);
-    // datetime-local 需要格式: YYYY-MM-DDTHH:mm
-    dueDateValue = date.toISOString().slice(0, 16);
-  }
-  noteDueDate.value = dueDateValue;
+  // 处理日期格式 - 使用本地时区
+  noteDueDate.value = normalizedNote.dueDate ? formatLocalDateTime(normalizedNote.dueDate) : '';
 
   // 先动态加载标签列表，再设置选中值
   await populateTagSelect();
@@ -629,11 +633,12 @@ let cleanupNotesChanged = window.electronAPI.onNotesChanged((event, notes) => {
       // 更新 allNotesData（全部数据）
       allNotesData = convertedNotes;
 
-      // 根据 currentFilterTagId 过滤笔记
+      // 根据 currentFilterTagId 过滤笔记（使用数值比较确保类型一致）
       if (!currentFilterTagId || currentFilterTagId === FILTER_ALL) {
         allNotes = convertedNotes;
       } else {
-        allNotes = convertedNotes.filter(note => String(note.colorId) === String(currentFilterTagId));
+        const filterId = parseInt(currentFilterTagId, 10);
+        allNotes = convertedNotes.filter(note => note.colorId === filterId);
       }
 
       renderNotes();
