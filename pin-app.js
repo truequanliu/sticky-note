@@ -11,7 +11,7 @@ let currentFilterTagId = FILTER_ALL; // 当前筛选标签 ID
 closePinBtn.addEventListener('click', closePinWindow);
 
 // 监听数据更新（保存清理函数）
-let cleanupNotesChanged = window.electronAPI.onNotesChanged((event, notes) => {
+let cleanupNotesChanged = window.electronAPI.onNotesChanged((_event, notes) => {
   try {
     // 改为调用 loadPinnedNotes 以正确处理筛选状态
     loadPinnedNotes();
@@ -21,7 +21,7 @@ let cleanupNotesChanged = window.electronAPI.onNotesChanged((event, notes) => {
 });
 
 // 监听筛选状态变更
-let cleanupFilterChanged = window.electronAPI.onFilterChanged((event, { tagId }) => {
+let cleanupFilterChanged = window.electronAPI.onFilterChanged((_event, { tagId }) => {
   try {
     currentFilterTagId = tagId;
     loadPinnedNotes();
@@ -43,17 +43,10 @@ window.addEventListener('beforeunload', () => {
 // 加载置顶便签
 async function loadPinnedNotes() {
   if (!currentFilterTagId || currentFilterTagId === FILTER_ALL) {
-    pinnedNotes = await window.electronAPI.db.getPinnedUncompleted();
+    pinnedNotes = normalizeNotesArray(await window.electronAPI.db.getPinnedUncompleted());
   } else {
-    pinnedNotes = await window.electronAPI.db.getPinnedByTag(currentFilterTagId);
+    pinnedNotes = normalizeNotesArray(await window.electronAPI.db.getPinnedByTag(currentFilterTagId));
   }
-
-  // 将数据库返回的数字转换为布尔值
-  pinnedNotes = pinnedNotes.map(note => ({
-    ...note,
-    isCompleted: Boolean(note.isCompleted),
-    isPinned: Boolean(note.isPinned)
-  }));
 
   renderPinnedNotes();
 }
@@ -71,14 +64,6 @@ function renderPinnedNotes() {
   }
 
   pinNoteList.innerHTML = pinnedNotes.map(note => createPinNoteCard(note)).join('');
-}
-
-/**
- * 切换标签筛选
- */
-async function switchTagFilter(tagId) {
-  currentFilterTagId = tagId;
-  await loadPinnedNotes();
 }
 
 function createPinNoteCard(note) {

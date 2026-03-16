@@ -248,25 +248,13 @@ async function init() {
 // 加载便签数据
 async function loadNotes() {
   // 先加载所有便签到 allNotesData
-  allNotesData = await window.electronAPI.db.getAll();
-
-  // 将数据库返回的数字转换为布尔值
-  allNotesData = allNotesData.map(note => ({
-    ...note,
-    isCompleted: Boolean(note.isCompleted),
-    isPinned: Boolean(note.isPinned)
-  }));
+  allNotesData = normalizeNotesArray(await window.electronAPI.db.getAll());
 
   // 根据 currentFilterTagId 筛选显示的便签
   if (!currentFilterTagId || currentFilterTagId === FILTER_ALL) {
     allNotes = allNotesData;
   } else {
-    const filteredNotes = await window.electronAPI.db.getByTag(currentFilterTagId);
-    allNotes = filteredNotes.map(note => ({
-      ...note,
-      isCompleted: Boolean(note.isCompleted),
-      isPinned: Boolean(note.isPinned)
-    }));
+    allNotes = normalizeNotesArray(await window.electronAPI.db.getByTag(currentFilterTagId));
   }
 
   renderNotes();
@@ -486,12 +474,7 @@ async function editNote(id) {
   const note = await window.electronAPI.db.getById(id);
   if (!note) return;
 
-  // 将数据库返回的数字转换为布尔值
-  const normalizedNote = {
-    ...note,
-    isCompleted: Boolean(note.isCompleted),
-    isPinned: Boolean(note.isPinned)
-  };
+  const normalizedNote = normalizeNoteFields(note);
 
   editingId = id;
   modalTitle.textContent = '编辑便签';
@@ -620,15 +603,11 @@ async function reopenPinWindow() {
 }
 
 // 监听数据变更（保存清理函数用于潜在的清理）
-let cleanupNotesChanged = window.electronAPI.onNotesChanged((event, notes) => {
+let cleanupNotesChanged = window.electronAPI.onNotesChanged((_event, notes) => {
   try {
-    // 将数据库返回的数字转换为布尔值
     if (Array.isArray(notes)) {
-      const convertedNotes = notes.map(note => ({
-        ...note,
-        isCompleted: Boolean(note.isCompleted),
-        isPinned: Boolean(note.isPinned)
-      }));
+      // 标准化所有便签字段
+      const convertedNotes = normalizeNotesArray(notes);
 
       // 更新 allNotesData（全部数据）
       allNotesData = convertedNotes;
@@ -651,7 +630,7 @@ let cleanupNotesChanged = window.electronAPI.onNotesChanged((event, notes) => {
 });
 
 // 监听标签变更
-let cleanupTagsChanged = window.electronAPI.onTagsChanged((event, tags) => {
+let cleanupTagsChanged = window.electronAPI.onTagsChanged((_event, tags) => {
   try {
     allTags = tags;
     renderTabBar();
@@ -661,7 +640,7 @@ let cleanupTagsChanged = window.electronAPI.onTagsChanged((event, tags) => {
 });
 
 // 监听筛选状态变更（新增）
-let cleanupFilterChanged = window.electronAPI.onFilterChanged((event, { tagId }) => {
+let cleanupFilterChanged = window.electronAPI.onFilterChanged((_event, { tagId }) => {
   try {
     currentFilterTagId = tagId;
     loadNotes();

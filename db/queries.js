@@ -495,11 +495,6 @@ async function deleteTag(id) {
 }
 
 module.exports = {
-  // Constants
-  ALLOWED_COLORS,
-  COLOR_HEX_MAP,
-  DEFAULT_SORT_ORDER,
-
   // Basic note operations
   getAllNotes,
   getNoteById,
@@ -510,7 +505,6 @@ module.exports = {
   togglePin,
   getPinnedUncompleted,
   getColors,
-  invalidateColorCache,
 
   // Tag management
   getAllTags,
@@ -522,7 +516,5 @@ module.exports = {
 
   // Tag filtering
   getNotesByTagId,
-  getUntaggedNotes,
-  getPinnedByTagId,
-  getPinnedUntagged
+  getPinnedByTagId
 };

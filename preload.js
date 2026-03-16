@@ -25,7 +25,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     // 标签筛选 API
     getByTag: (tagId) => ipcRenderer.invoke('notes:getByTag', tagId),
-    getUntagged: () => ipcRenderer.invoke('notes:getUntagged'),
     getPinnedByTag: (tagId) => ipcRenderer.invoke('notes:getPinnedByTag', tagId)
   },
 
@@ -58,11 +57,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // 获取当前筛选
   getFilter: () => ipcRenderer.invoke('filter:get'),
-
-  // 移除数据变更监听（备用方法）
-  offNotesChanged: (callback) => {
-    ipcRenderer.removeListener('notes-changed', callback);
-  },
 
   // 窗口控制 API
   reopenPinWindow: () => ipcRenderer.invoke('reopen-pin-window'),

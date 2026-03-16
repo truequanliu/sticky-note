@@ -43,3 +43,25 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+/**
+ * 标准化便签字段（将数据库返回的数字转换为布尔值）
+ * @param {Object} note - 便签对象
+ * @returns {Object} 标准化后的便签对象
+ */
+function normalizeNoteFields(note) {
+  return {
+    ...note,
+    isCompleted: Boolean(note.isCompleted),
+    isPinned: Boolean(note.isPinned)
+  };
+}
+
+/**
+ * 标准化便签数组
+ * @param {Array} notes - 便签数组
+ * @returns {Array} 标准化后的便签数组
+ */
+function normalizeNotesArray(notes) {
+  return notes.map(normalizeNoteFields);
+}

@@ -5,7 +5,7 @@ const { closePool } = require('./db/connection');
 const { getColors, getAllNotes, getPinnedUncompleted,
         getNoteById, addNote, updateNote, deleteNote, toggleComplete, togglePin,
         getAllTags, getTagById, getTagUsageCount, createTag, updateTag, deleteTag,
-        getNotesByTagId, getUntaggedNotes, getPinnedByTagId, getPinnedUntagged } = require('./db/queries');
+        getNotesByTagId, getPinnedByTagId } = require('./db/queries');
 
 let mainWindow;
 let pinWindow;
@@ -427,22 +427,12 @@ ipcMain.handle('notes:getByTag', async (event, tagId) => {
   return await getNotesByTagId(tagId);
 });
 
-// 获取无标签便签
-ipcMain.handle('notes:getUntagged', async () => {
-  return await getUntaggedNotes();
-});
-
 // 按标签获取置顶便签
 ipcMain.handle('notes:getPinnedByTag', async (event, tagId) => {
   if (tagId === null || tagId === '') {
     return await getPinnedUncompleted();
   }
   return await getPinnedByTagId(tagId);
-});
-
-// 获取无标签置顶便签
-ipcMain.handle('notes:getPinnedUntagged', async () => {
-  return await getPinnedUntagged();
 });
 
 // ==================== 筛选状态管理 ====================

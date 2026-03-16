@@ -97,37 +97,6 @@ header h1 {
     margin-top: 8px;
 }
 
-/* Note Card */
-.note-card {
-    background: white;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid transparent;
-    transition: all 0.2s;
-}
-
-.note-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-}
-
-.note-card.color-red { border-left-color: #ef4444; }
-.note-card.color-blue { border-left-color: #3b82f6; }
-.note-card.color-green { border-left-color: #22c55e; }
-.note-card.color-purple { border-left-color: #a855f7; }
-
-.note-card.completed {
-    opacity: 0.6;
-}
-
-.note-card.completed .note-content {
-    text-decoration: line-through;
-}
-
-.note-card.overdue .note-content {
-    color: #ef4444;
-}
-
 .note-header {
     display: flex;
     justify-content: space-between;
@@ -486,29 +455,6 @@ header h1 {
     gap: 8px;
 }
 
-.btn-small-text {
-    background: none;
-    border: none;
-    color: #3b82f6;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 4px 8px;
-}
-
-.btn-small-text:hover {
-    text-decoration: underline;
-}
-
-.btn-small-text.delete {
-    color: #ef4444;
-}
-
-.btn-small-text:disabled {
-    color: #d1d5db;
-    cursor: not-allowed;
-    text-decoration: none;
-}
-
 /* ==================== 颜色选择器 ==================== */
 .color-options {
     display: grid;
@@ -560,20 +506,6 @@ header h1 {
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 10000;
-    animation: slideIn 0.3s ease-out;
-}
-
-.toast.toast-success {
-    background: #22c55e;
-}
-
-.toast.toast-info {
-    background: #3b82f6;
-}
-
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideOut {
